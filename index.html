@@ -95,7 +95,7 @@
     background:linear-gradient(to bottom, rgba(235,255,255,.96), rgba(160,236,255,.96));
   }
   #controls{
-    position:absolute;bottom:max(14px, env(safe-area-inset-bottom));left:14px;right:14px;display:flex;justify-content:space-between;gap:14px;pointer-events:none
+    position:absolute;bottom:14px;left:14px;right:14px;display:flex;justify-content:space-between;gap:14px;pointer-events:none
   }
   .ctrl{
     flex:1;
@@ -114,16 +114,54 @@
   }
   .ctrl.jump{background:rgba(255,231,120,.94)} .ctrl.roll{background:rgba(255,182,80,.94)}
   .hide{display:none!important}
-
-  @media (max-width: 700px){
-    .panel{padding:16px;border-radius:20px}
-    .btnrow button{min-width:130px}
-    .ctrl{min-height:88px;font-size:24px}
-    #hud{top:8px;left:8px;right:8px}
-    .hudbox{padding:8px 10px;min-width:108px;font-size:14px}
-  }
-
 </style>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<style>
+  html, body {
+    margin:0; padding:0; overflow:hidden; background:#000;
+    height:100%; width:100%;
+    touch-action: manipulation;
+  }
+  #gameContainer {
+    position:fixed; inset:0;
+    display:flex; align-items:center; justify-content:center;
+  }
+  canvas {
+    max-width:100vw;
+    max-height:100vh;
+  }
+  #rotateOverlay {
+    position:fixed; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    background:#111; color:#fff; font-size:22px; text-align:center;
+    z-index:9999;
+  }
+  #rotateOverlay.hidden { display:none; }
+
+  /* Touch buttons */
+  #touchControls {
+    position:fixed;
+    bottom: max(10px, env(safe-area-inset-bottom));
+    left:0; right:0;
+    display:flex;
+    justify-content:space-between;
+    padding:0 16px;
+    pointer-events:none;
+  }
+  .touchBtn {
+    width:42vw;
+    height:90px;
+    border-radius:20px;
+    font-size:22px;
+    font-weight:bold;
+    border:3px solid #222;
+    pointer-events:auto;
+  }
+  #btnJump { background:#f4d35e; }
+  #btnRoll { background:#f6a84f; }
+</style>
+
 </head>
 <body>
 <div id="wrap">
@@ -147,14 +185,14 @@
     <div class="panel">
       <div style="height:6px"></div>
       <h1 class="game-title">EL JUEGO DEL ÑI</h1>
-      <p><strong>Versión 82:</strong> primer paso mobile: el inicio ahora responde mejor en celular, con arranque robusto por botón o tocando el panel, además de ajustes de controles y layout para móviles.</p>
+      <p><strong>Versión 81:</strong> corrige la secuencia final de Antonia: el Ñi baja y toca el piso todavía rosa, mantiene un instante rosa ya en el suelo, luego pasa a amarillo y recién desde ahí corre 1 segundo extra de protección.</p>
       <ul>
         <li><strong>SALTAR</strong> = hoyos y obstáculos del suelo, con doble salto.</li><li><strong>ESPINADO</strong> = enemigo alto especial; no muere con ruedo.</li><li><strong>NIÑOS</strong> = Bruno da escudo, Tommy imán, Diego tiempo lento.</li>
         <li><strong>RODAR</strong> = varios enemigos y bonus, también funciona en el aire; los espinados no.</li>
         <li>Se evitaron combinaciones injustas como hoyo + obstáculo pegados.</li>
       </ul>
       <p class="credits">Creado por Bruno Wagner</p>
-      <div class="btnrow"><button id="playBtn">JUGAR</button><button class="secondary" id="kidsBtn">VER NIÑOS</button></div><p class="small">En celular también puedes tocar cualquier parte del panel para empezar.</p>
+      <div class="btnrow"><button id="playBtn">JUGAR</button><button class="secondary" id="kidsBtn">VER NIÑOS</button></div>
     </div>
   </div>
 
@@ -2112,33 +2150,11 @@ function drawRescue(e){
     startScreen.classList.remove('hide');
   }
 
-
-  function startGameFromUI(ev){
-    if (ev) ev.preventDefault();
-    if (GAME.state === 'menu') resetGame();
-  }
-
-  playBtn.addEventListener('click', startGameFromUI);
-  playBtn.addEventListener('touchend', startGameFromUI, {passive:false});
-  playBtn.addEventListener('pointerup', startGameFromUI, {passive:false});
-  startScreen.addEventListener('touchend', (ev) => {
-    const target = ev.target;
-    if (target === kidsBtn || target === backFromKidsBtn || target === menuBtn) return;
-    if (GAME.state === 'menu') startGameFromUI(ev);
-  }, {passive:false});
-  startScreen.addEventListener('pointerup', (ev) => {
-    const target = ev.target;
-    if (target === kidsBtn || target === backFromKidsBtn || target === menuBtn) return;
-    if (GAME.state === 'menu') startGameFromUI(ev);
-  }, {passive:false});
+  playBtn.addEventListener('click', resetGame);
   kidsBtn.addEventListener('click', openKidsGallery);
-  kidsBtn.addEventListener('touchend', (ev)=>{ ev.preventDefault(); openKidsGallery(); }, {passive:false});
   backFromKidsBtn.addEventListener('click', closeKidsGallery);
-  backFromKidsBtn.addEventListener('touchend', (ev)=>{ ev.preventDefault(); closeKidsGallery(); }, {passive:false});
   retryBtn.addEventListener('click', resetGame);
-  retryBtn.addEventListener('touchend', (ev)=>{ ev.preventDefault(); resetGame(); }, {passive:false});
   menuBtn.addEventListener('click', toMenu);
-  menuBtn.addEventListener('touchend', (ev)=>{ ev.preventDefault(); toMenu(); }, {passive:false});
   canvas.addEventListener('pointerdown', quickRestart, {passive:true});
 
   window.addEventListener('keydown', (e) => {
@@ -2165,5 +2181,38 @@ function drawRescue(e){
   requestAnimationFrame(loop);
 })();
 </script>
+
+<div id="rotateOverlay">Gira el teléfono en horizontal para jugar</div>
+
+<div id="touchControls">
+  <button id="btnJump" class="touchBtn">SALTAR</button>
+  <button id="btnRoll" class="touchBtn">RODAR</button>
+</div>
+
+<script>
+function checkOrientation(){
+  const overlay = document.getElementById('rotateOverlay');
+  if (window.innerWidth > window.innerHeight){
+    overlay.classList.add('hidden');
+  } else {
+    overlay.classList.remove('hidden');
+  }
+}
+window.addEventListener('resize', checkOrientation);
+window.addEventListener('orientationchange', checkOrientation);
+checkOrientation();
+
+// Map touch buttons to existing controls (space=jump, down=roll assumed)
+document.getElementById('btnJump').addEventListener('touchstart', e=>{
+  e.preventDefault();
+  window.dispatchEvent(new KeyboardEvent('keydown', {code:'Space'}));
+},{passive:false});
+
+document.getElementById('btnRoll').addEventListener('touchstart', e=>{
+  e.preventDefault();
+  window.dispatchEvent(new KeyboardEvent('keydown', {code:'ArrowDown'}));
+},{passive:false});
+</script>
+
 </body>
 </html>
