@@ -114,9 +114,50 @@
   }
   .ctrl.jump{background:rgba(255,231,120,.94)} .ctrl.roll{background:rgba(255,182,80,.94)}
   .hide{display:none!important}
+
+  @media (orientation: landscape) and (max-height: 500px){
+    .panel{
+      max-width:min(84vw, 760px) !important;
+      max-height:72vh !important;
+      overflow:hidden !important;
+      padding:14px 16px !important;
+      border-radius:20px !important;
+    }
+    #startScreen .panel{
+      max-width:min(72vw, 620px) !important;
+      max-height:48vh !important;
+      padding:12px 14px !important;
+    }
+    #startScreen .panel h1{
+      font-size:36px !important;
+      margin:2px 0 8px 0 !important;
+      line-height:1.0 !important;
+    }
+    #startScreen .panel > p:first-of-type,
+    #startScreen .panel ul{
+      display:none !important;
+    }
+    #startScreen .credits{
+      font-size:13px !important;
+      margin:6px 0 10px 0 !important;
+    }
+    .panel h2{font-size:26px !important; margin:0 0 8px 0 !important;}
+    .panel p, .panel li{font-size:14px !important; line-height:1.2 !important;}
+    .btnrow{gap:10px !important;}
+    .btnrow button{min-height:48px !important; font-size:17px !important; min-width:120px !important;}
+  }
+
+
+  .mobilehint{opacity:.82;margin:4px 0 10px 0}
 </style>
 
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Juego del Ñi">
+<meta name="theme-color" content="#87cf6c">
+
 <style>
   html, body {
     margin:0; padding:0; overflow:hidden; background:#000;
@@ -142,24 +183,62 @@
   /* Touch buttons */
   #touchControls {
     position:fixed;
-    bottom: max(10px, env(safe-area-inset-bottom));
+    bottom: max(8px, env(safe-area-inset-bottom));
     left:0; right:0;
     display:flex;
     justify-content:space-between;
-    padding:0 16px;
+    padding:0 12px;
     pointer-events:none;
+    z-index:30;
   }
   .touchBtn {
-    width:42vw;
-    height:90px;
-    border-radius:20px;
-    font-size:22px;
+    width:30vw;
+    min-width:140px;
+    max-width:220px;
+    height:58px;
+    border-radius:16px;
+    font-size:18px;
     font-weight:bold;
     border:3px solid #222;
     pointer-events:auto;
   }
   #btnJump { background:#f4d35e; }
   #btnRoll { background:#f6a84f; }
+
+  @media (orientation: landscape) and (max-height: 500px){
+    .panel{
+      max-width:min(84vw, 760px) !important;
+      max-height:72vh !important;
+      overflow:hidden !important;
+      padding:14px 16px !important;
+      border-radius:20px !important;
+    }
+    #startScreen .panel{
+      max-width:min(72vw, 620px) !important;
+      max-height:48vh !important;
+      padding:12px 14px !important;
+    }
+    #startScreen .panel h1{
+      font-size:36px !important;
+      margin:2px 0 8px 0 !important;
+      line-height:1.0 !important;
+    }
+    #startScreen .panel > p:first-of-type,
+    #startScreen .panel ul{
+      display:none !important;
+    }
+    #startScreen .credits{
+      font-size:13px !important;
+      margin:6px 0 10px 0 !important;
+    }
+    .panel h2{font-size:26px !important; margin:0 0 8px 0 !important;}
+    .panel p, .panel li{font-size:14px !important; line-height:1.2 !important;}
+    .btnrow{gap:10px !important;}
+    .btnrow button{min-height:48px !important; font-size:17px !important; min-width:120px !important;}
+  }
+
+
+  .mobilehint{opacity:.82;margin:4px 0 10px 0}
 </style>
 
 </head>
@@ -185,13 +264,13 @@
     <div class="panel">
       <div style="height:6px"></div>
       <h1 class="game-title">EL JUEGO DEL ÑI</h1>
-      <p><strong>Versión 81:</strong> corrige la secuencia final de Antonia: el Ñi baja y toca el piso todavía rosa, mantiene un instante rosa ya en el suelo, luego pasa a amarillo y recién desde ahí corre 1 segundo extra de protección.</p>
+      <p><strong>Versión 85:</strong> refina el modo móvil horizontal: botones touch mucho más chicos y pegados a los bordes, menú inicial más compacto en iPhone apaisado y metadatos para que al agregarlo a pantalla de inicio desaparezca la barra del navegador.</p>
       <ul>
         <li><strong>SALTAR</strong> = hoyos y obstáculos del suelo, con doble salto.</li><li><strong>ESPINADO</strong> = enemigo alto especial; no muere con ruedo.</li><li><strong>NIÑOS</strong> = Bruno da escudo, Tommy imán, Diego tiempo lento.</li>
         <li><strong>RODAR</strong> = varios enemigos y bonus, también funciona en el aire; los espinados no.</li>
         <li>Se evitaron combinaciones injustas como hoyo + obstáculo pegados.</li>
       </ul>
-      <p class="credits">Creado por Bruno Wagner</p>
+      <p class="credits">Creado por Bruno Wagner</p><p class="small mobilehint">En iPhone se ve mejor con “Agregar a pantalla de inicio”.</p>
       <div class="btnrow"><button id="playBtn">JUGAR</button><button class="secondary" id="kidsBtn">VER NIÑOS</button></div>
     </div>
   </div>
@@ -2212,6 +2291,17 @@ document.getElementById('btnRoll').addEventListener('touchstart', e=>{
   e.preventDefault();
   window.dispatchEvent(new KeyboardEvent('keydown', {code:'ArrowDown'}));
 },{passive:false});
+</script>
+
+
+<script>
+function updateTouchControlsVisibility(){
+  const tc = document.getElementById('touchControls');
+  if (!tc || !window.GAME) return;
+  tc.style.display = (GAME.state === 'play') ? 'flex' : 'none';
+}
+setInterval(updateTouchControlsVisibility, 120);
+window.addEventListener('load', updateTouchControlsVisibility);
 </script>
 
 </body>
