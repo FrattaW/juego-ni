@@ -12,7 +12,7 @@
 <meta name="description" content="Corre, salta y rescata amigos en El Juego del Ñi." />
 <link rel="manifest" href="manifest.webmanifest" />
 <link rel="apple-touch-icon" href="icons/icon-192.png" />
-<title>El Juego del Ñi - V110</title>
+<title>El Juego del Ñi - V109</title>
 <style>
   :root{
     --ui:#152233;
@@ -1302,140 +1302,78 @@ function drawPlayer(){
       ctx.fill();
     }
 
-    // golden sheep wool: same silhouette, more volume and fleece texture.
+    // wool gradient
     const woolG = ctx.createLinearGradient(x,y+12+oy,x,y+92+oy);
     woolG.addColorStop(0,pal.woolTop);
-    woolG.addColorStop(0.46,pal.woolMid);
+    woolG.addColorStop(0.52,pal.woolMid);
     woolG.addColorStop(1,pal.woolBot);
     ctx.fillStyle=woolG;
 
-    // body fleece
+    // body cloud
     const bodyPuffs = [
-      [22,31,14],[38,23,15],[56,20,16],[74,22,15],[90,29,14],
-      [18,45,14],[34,49,15],[53,51,16],[73,50,15],[93,44,14],
-      [25,61,11],[43,64,12],[62,65,12],[82,63,11],[99,57,10]
+      [22,30,14],[38,22,15],[56,20,16],[74,22,15],[90,28,14],
+      [20,44,13],[36,48,14],[56,50,15],[76,48,14],[94,42,13],
+      [24,60,10],[42,63,11],[62,64,11],[82,63,10],[98,58,9]
     ];
     for(const [px,py,pr] of bodyPuffs){
       ctx.beginPath(); ctx.arc(x+px,y+py+oy,pr,0,Math.PI*2); ctx.fill();
     }
     roundedRect(x+18,y+28+oy,86,42,22,true);
 
-    // soft lower amber depth
-    const bellyG = ctx.createLinearGradient(x,y+52+oy,x,y+82+oy);
-    bellyG.addColorStop(0,'rgba(255,255,255,0)');
-    bellyG.addColorStop(1,'rgba(181,111,0,.14)');
-    ctx.fillStyle=bellyG;
-    ctx.beginPath();
-    ctx.ellipse(x+61,y+62+oy,45,17,0,0,Math.PI*2);
-    ctx.fill();
-
-    // fleece dimples and highlights
-    ctx.strokeStyle='rgba(156,98,0,.16)';
-    ctx.lineWidth=1.8;
-    ctx.lineCap='round';
-    const fleeceLines = [
-      [31,35,42,31],[49,30,62,29],[70,31,82,34],
-      [28,50,39,55],[48,55,60,58],[70,56,83,53],
-      [38,68,51,69],[60,70,72,69],[84,65,94,61]
-    ];
-    for(const [x1,y1,x2,y2] of fleeceLines){
-      ctx.beginPath();
-      ctx.moveTo(x+x1,y+y1+oy);
-      ctx.quadraticCurveTo(x+(x1+x2)/2,y+(y1+y2)/2-3+oy,x+x2,y+y2+oy);
-      ctx.stroke();
-    }
-    ctx.fillStyle='rgba(255,255,255,.26)';
-    for(const [px,py,pr] of [[35,31,4.2],[56,27,4.8],[78,31,3.8],[42,50,3.2],[67,49,3.6]]){
-      ctx.beginPath(); ctx.arc(x+px,y+py+oy,pr,0,Math.PI*2); ctx.fill();
-    }
-
     // neck/body connector
-    ctx.fillStyle=woolG;
     ctx.beginPath();
     ctx.ellipse(x+100,y+47+oy,13,15,-0.15,0,Math.PI*2);
     ctx.fill();
 
-    // legs and hooves, same anchors with warmer rounded shape
-    function drawSheepLeg(lx,ly,swing){
-      ctx.save();
-      ctx.translate(lx,ly);
-      ctx.rotate((swing*Math.PI)/180);
-      const legG = ctx.createLinearGradient(0,0,0,28);
-      legG.addColorStop(0,'#6a4a22');
-      legG.addColorStop(1,'#3f2a16');
-      ctx.fillStyle=legG;
-      roundedRect(-4.2,0,8.4,23.5,4,true);
-      ctx.fillStyle='#2f2115';
-      roundedRect(-5.7,20,11.4,6.2,3,true);
-      ctx.restore();
-    }
-    drawSheepLeg(x+34,y+79,legA);
-    drawSheepLeg(x+50,y+80,legB);
-    drawSheepLeg(x+76,y+80,legA);
-    drawSheepLeg(x+92,y+79,legB);
+    // legs
+    drawLeg(x+34,y+79,legA,'#5a401d');
+    drawLeg(x+50,y+80,legB,'#5a401d');
+    drawLeg(x+76,y+80,legA,'#5a401d');
+    drawLeg(x+92,y+79,legB,'#5a401d');
 
     // cloud-like head fluff around entire face
     ctx.fillStyle=woolG;
     const headPuffs = [
-      [104,31,6.5],[112,26,7.5],[121,30,6.5],
-      [101,40,5.5],[99,50,5.3],
-      [107,60,5.3],[117,61,5.3],[126,56,5.5],
-      [129,46,5.4],[126,36,5.4],
-      [109,37,4.4],[116,36,4.2]
+      [104,31,6],[112,26,7],[121,30,6],
+      [101,40,5],[99,50,5],
+      [107,60,5],[117,61,5],[126,56,5],
+      [129,46,5],[126,36,5],
+      [109,37,4],
+      [112,36,3.8] // fill tiny transparent gap above left eye
     ];
     for(const [px,py,pr] of headPuffs){
       ctx.beginPath(); ctx.arc(x+px,y+py+oy,pr,0,Math.PI*2); ctx.fill();
     }
 
-    // little sheep ear, tucked behind the face
-    const earG = ctx.createLinearGradient(x+126,y+42+oy,x+137,y+55+oy);
-    earG.addColorStop(0,pal.faceMid);
-    earG.addColorStop(1,pal.muzzle);
-    ctx.fillStyle=earG;
-    ctx.beginPath();
-    ctx.ellipse(x+132,y+49+oy,6.5,9,0.62,0,Math.PI*2);
-    ctx.fill();
-    ctx.fillStyle='rgba(111,69,28,.18)';
-    ctx.beginPath(); ctx.ellipse(x+133,y+50+oy,2.2,5.3,0.62,0,Math.PI*2); ctx.fill();
-
-    // soft sheep face
-    const faceG = ctx.createLinearGradient(x+106,y+30+oy,x+130,y+64+oy);
+    // soft face
+    const faceG = ctx.createLinearGradient(x+106,y+30+oy,x+130,y+62+oy);
     faceG.addColorStop(0,pal.faceTop);
     faceG.addColorStop(0.52,pal.faceMid);
     faceG.addColorStop(1,pal.faceBot);
     ctx.fillStyle=faceG;
     ctx.beginPath();
-    ctx.moveTo(x+105.5,y+44+oy);
-    ctx.quadraticCurveTo(x+107.8,y+33+oy,x+117,y+32+oy);
-    ctx.quadraticCurveTo(x+128,y+33+oy,x+130,y+43+oy);
-    ctx.quadraticCurveTo(x+131.5,y+53+oy,x+124.5,y+60.5+oy);
-    ctx.quadraticCurveTo(x+116,y+65.5+oy,x+108,y+60+oy);
-    ctx.quadraticCurveTo(x+103.8,y+53+oy,x+105.5,y+44+oy);
+    ctx.moveTo(x+106,y+44+oy);
+    ctx.quadraticCurveTo(x+108,y+33+oy,x+117,y+32+oy);
+    ctx.quadraticCurveTo(x+127,y+33+oy,x+129,y+42+oy);
+    ctx.quadraticCurveTo(x+130,y+52+oy,x+124,y+59+oy);
+    ctx.quadraticCurveTo(x+116,y+64+oy,x+108,y+59+oy);
+    ctx.quadraticCurveTo(x+104,y+53+oy,x+106,y+44+oy);
     ctx.closePath();
     ctx.fill();
 
-    // muzzle and cheek
+    // muzzle
     ctx.fillStyle=pal.muzzle;
-    ctx.beginPath(); ctx.ellipse(x+121.4,y+53.2+oy,8.6,7.2,-0.05,0,Math.PI*2); ctx.fill();
-    ctx.fillStyle='rgba(255,255,255,.30)';
-    ctx.beginPath(); ctx.arc(x+114,y+54+oy,2.4,0,Math.PI*2); ctx.fill();
-    ctx.fillStyle='rgba(150,82,18,.13)';
-    ctx.beginPath(); ctx.arc(x+127,y+54+oy,2.4,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(x+121,y+52+oy,8.2,7.0,0,0,Math.PI*2); ctx.fill();
 
     // eyes
     ctx.fillStyle='#111827';
-    ctx.beginPath(); ctx.ellipse(x+114,y+43+oy,2.8,3.2,0,0,Math.PI*2); ctx.fill();
-    ctx.beginPath(); ctx.ellipse(x+122.2,y+43+oy,2.8,3.2,0,0,Math.PI*2); ctx.fill();
-    ctx.fillStyle='rgba(255,255,255,.82)';
-    ctx.beginPath(); ctx.arc(x+113.1,y+41.8+oy,0.9,0,Math.PI*2); ctx.fill();
-    ctx.beginPath(); ctx.arc(x+121.3,y+41.8+oy,0.9,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(x+114,y+42+oy,2.8,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(x+122,y+42+oy,2.8,0,Math.PI*2); ctx.fill();
 
-    // warm smile and tiny nose
-    ctx.fillStyle='#5b3d21';
-    ctx.beginPath(); ctx.ellipse(x+120.8,y+50.2+oy,1.7,1.1,0,0,Math.PI*2); ctx.fill();
+    // smile slightly up and left
     ctx.strokeStyle='#5b3d21';
     ctx.lineWidth=2.2;
-    ctx.beginPath(); ctx.arc(x+120.5,y+54.0+oy,5.7,0.18,2.98); ctx.stroke();
+    ctx.beginPath(); ctx.arc(x+120.5,y+53.0+oy,5.9,0.18,2.98); ctx.stroke();
 
     ctx.restore();
   }
