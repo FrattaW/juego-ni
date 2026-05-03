@@ -1,4 +1,4 @@
-const CACHE_NAME = 'el-juego-del-ni-v108';
+const CACHE_NAME = 'el-juego-del-ni-v110';
 const ASSETS = [
   './',
   './index.html',

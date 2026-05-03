@@ -12,7 +12,7 @@
 <meta name="description" content="Corre, salta y rescata amigos en El Juego del Ñi." />
 <link rel="manifest" href="manifest.webmanifest" />
 <link rel="apple-touch-icon" href="icons/icon-192.png" />
-<title>El Juego del Ñi - V108</title>
+<title>El Juego del Ñi - V110</title>
 <style>
   :root{
     --ui:#152233;
@@ -145,17 +145,16 @@
   .ctrl{
     flex:1;
     min-height:78px;
-    border-radius:24px;
+    border-radius:22px;
     border:4px solid #0e1726;
     display:flex;
     align-items:center;
     justify-content:center;
-    gap:12px;
     font-size:26px;
     font-weight:900;
     user-select:none;
     pointer-events:auto;
-    box-shadow:0 12px 22px rgba(0,0,0,.22), inset 0 -5px 0 rgba(0,0,0,.18), inset 0 3px 0 rgba(255,255,255,.42);
+    box-shadow:0 12px 22px rgba(0,0,0,.22), inset 0 -6px 0 rgba(0,0,0,.18), inset 0 3px 0 rgba(255,255,255,.42);
     letter-spacing:1px;
     text-shadow:0 2px 0 rgba(255,255,255,.35);
     position:relative;
@@ -163,24 +162,16 @@
     transition:transform .08s ease, filter .08s ease
   }
   .ctrl::before{
-    content:'↑';
-    width:34px;
-    height:34px;
-    flex:0 0 auto;
-    border:3px solid currentColor;
-    border-radius:50%;
-    background:rgba(255,255,255,.34);
-    box-shadow:inset 0 2px 0 rgba(255,255,255,.55);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:24px;
-    line-height:1;
-    font-family:Arial,sans-serif
+    content:'';
+    position:absolute;
+    inset:5px 8px auto 8px;
+    height:42%;
+    border-radius:18px;
+    background:linear-gradient(to bottom, rgba(255,255,255,.48), rgba(255,255,255,0));
+    pointer-events:none
   }
   .ctrl.jump{background:linear-gradient(to bottom,#fff59d,#ffd54f 58%,#f5b82e);color:#111827}
   .ctrl.roll{background:linear-gradient(to bottom,#ffc96b,#ff9f35 58%,#e97714);color:#111827}
-  .ctrl.roll::before{content:'↓'}
   .ctrl:active{transform:translateY(3px);filter:saturate(1.08);box-shadow:0 7px 14px rgba(0,0,0,.20), inset 0 -2px 0 rgba(0,0,0,.18), inset 0 2px 0 rgba(255,255,255,.35)}
   .rotate-screen{
     position:absolute;
@@ -240,13 +231,15 @@
       font-size:20px;
       letter-spacing:0
     }
-    .ctrl::before{width:26px;height:26px;border-width:2px;font-size:19px}
     #message{top:52px;font-size:13px;max-width:88vw}
   }
 
   @media (orientation: portrait) and (max-width: 700px){
     body.needs-landscape #rotateScreen{display:flex}
   }
+
+  #kidsScreen .btnrow{margin-top:8px}
+  #kidsScreen button{font-size:16px;padding:10px 16px;border-radius:14px}
 
 .legend-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:14px}
 .legend-card{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:12px}
@@ -256,9 +249,9 @@
 
 
 /* portada */
-.title-stack{display:flex;flex-direction:column;align-items:center;line-height:.92;margin-bottom:8px}
+.title-stack{display:flex;flex-direction:column;align-items:center;line-height:1;margin-bottom:8px}
 .title-small{font-size:clamp(26px,3.8vw,40px);font-weight:900;letter-spacing:1.8px;opacity:.95}
-.title-nii{font-size:clamp(68px,11vw,122px);font-weight:1000;letter-spacing:1px;text-shadow:0 8px 24px rgba(0,0,0,.25)}
+.title-nii{font-size:clamp(68px,11vw,122px);font-weight:1000;letter-spacing:1px;text-shadow:0 8px 24px rgba(0,0,0,.25);margin-top:8px}
 .creator-credit{margin-top:18px;font-size:14px;opacity:.82;letter-spacing:.4px}
 
 /* modal personajes */
@@ -276,7 +269,7 @@
     flex-direction:column;
     align-items:center;
     justify-content:center;
-    line-height:.9;
+    line-height:1;
     margin:6px 0 10px 0;
   }
   .title-small{
@@ -293,7 +286,7 @@
     letter-spacing:1px;
     color:#102033;
     text-shadow:0 2px 0 #fff,0 6px 0 rgba(0,0,0,.08),0 12px 22px rgba(0,0,0,.14);
-    margin-top:2px;
+    margin-top:8px;
   }
   #startScreen .panel{
     max-width:min(760px,94vw);
@@ -355,10 +348,10 @@
   </div>
 
   <div class="overlay hide" id="kidsScreen">
-    <div class="panel" style="width:min(1020px,92vw);max-height:none;overflow:hidden;padding:16px 16px 14px 16px">
-      <h2 style="margin-bottom:4px">VER PERSONAJES</h2>
-      <p class="small" style="margin-top:2px;margin-bottom:8px">Héroes, aliados y amenazas del mundo del Ñi.</p>
-      <canvas id="kidsPreview" width="930" height="650" style="width:min(930px,calc(100vw - 78px),calc(143.08vh - 272px));height:auto;border:3px solid #152233;border-radius:18px;background:linear-gradient(to bottom,#bfefff,#f6fdff);display:block;margin:8px auto 0 auto"></canvas>
+    <div class="panel" style="width:min(1040px,94vw);max-height:none;overflow:hidden;padding:8px 18px 10px 18px">
+      <h2 style="margin-bottom:0;font-size:32px">VER PERSONAJES</h2>
+      <p class="small" style="margin-top:0;margin-bottom:2px;font-size:13px">Héroes, aliados y amenazas del mundo del Ñi.</p>
+      <canvas id="kidsPreview" width="930" height="300" style="width:min(930px,calc(100vw - 88px));height:auto;display:block;margin:0 auto"></canvas>
       <div class="btnrow">
         <button id="backFromKidsBtn">VOLVER</button>
       </div>
@@ -1309,78 +1302,140 @@ function drawPlayer(){
       ctx.fill();
     }
 
-    // wool gradient
+    // golden sheep wool: same silhouette, more volume and fleece texture.
     const woolG = ctx.createLinearGradient(x,y+12+oy,x,y+92+oy);
     woolG.addColorStop(0,pal.woolTop);
-    woolG.addColorStop(0.52,pal.woolMid);
+    woolG.addColorStop(0.46,pal.woolMid);
     woolG.addColorStop(1,pal.woolBot);
     ctx.fillStyle=woolG;
 
-    // body cloud
+    // body fleece
     const bodyPuffs = [
-      [22,30,14],[38,22,15],[56,20,16],[74,22,15],[90,28,14],
-      [20,44,13],[36,48,14],[56,50,15],[76,48,14],[94,42,13],
-      [24,60,10],[42,63,11],[62,64,11],[82,63,10],[98,58,9]
+      [22,31,14],[38,23,15],[56,20,16],[74,22,15],[90,29,14],
+      [18,45,14],[34,49,15],[53,51,16],[73,50,15],[93,44,14],
+      [25,61,11],[43,64,12],[62,65,12],[82,63,11],[99,57,10]
     ];
     for(const [px,py,pr] of bodyPuffs){
       ctx.beginPath(); ctx.arc(x+px,y+py+oy,pr,0,Math.PI*2); ctx.fill();
     }
     roundedRect(x+18,y+28+oy,86,42,22,true);
 
+    // soft lower amber depth
+    const bellyG = ctx.createLinearGradient(x,y+52+oy,x,y+82+oy);
+    bellyG.addColorStop(0,'rgba(255,255,255,0)');
+    bellyG.addColorStop(1,'rgba(181,111,0,.14)');
+    ctx.fillStyle=bellyG;
+    ctx.beginPath();
+    ctx.ellipse(x+61,y+62+oy,45,17,0,0,Math.PI*2);
+    ctx.fill();
+
+    // fleece dimples and highlights
+    ctx.strokeStyle='rgba(156,98,0,.16)';
+    ctx.lineWidth=1.8;
+    ctx.lineCap='round';
+    const fleeceLines = [
+      [31,35,42,31],[49,30,62,29],[70,31,82,34],
+      [28,50,39,55],[48,55,60,58],[70,56,83,53],
+      [38,68,51,69],[60,70,72,69],[84,65,94,61]
+    ];
+    for(const [x1,y1,x2,y2] of fleeceLines){
+      ctx.beginPath();
+      ctx.moveTo(x+x1,y+y1+oy);
+      ctx.quadraticCurveTo(x+(x1+x2)/2,y+(y1+y2)/2-3+oy,x+x2,y+y2+oy);
+      ctx.stroke();
+    }
+    ctx.fillStyle='rgba(255,255,255,.26)';
+    for(const [px,py,pr] of [[35,31,4.2],[56,27,4.8],[78,31,3.8],[42,50,3.2],[67,49,3.6]]){
+      ctx.beginPath(); ctx.arc(x+px,y+py+oy,pr,0,Math.PI*2); ctx.fill();
+    }
+
     // neck/body connector
+    ctx.fillStyle=woolG;
     ctx.beginPath();
     ctx.ellipse(x+100,y+47+oy,13,15,-0.15,0,Math.PI*2);
     ctx.fill();
 
-    // legs
-    drawLeg(x+34,y+79,legA,'#5a401d');
-    drawLeg(x+50,y+80,legB,'#5a401d');
-    drawLeg(x+76,y+80,legA,'#5a401d');
-    drawLeg(x+92,y+79,legB,'#5a401d');
+    // legs and hooves, same anchors with warmer rounded shape
+    function drawSheepLeg(lx,ly,swing){
+      ctx.save();
+      ctx.translate(lx,ly);
+      ctx.rotate((swing*Math.PI)/180);
+      const legG = ctx.createLinearGradient(0,0,0,28);
+      legG.addColorStop(0,'#6a4a22');
+      legG.addColorStop(1,'#3f2a16');
+      ctx.fillStyle=legG;
+      roundedRect(-4.2,0,8.4,23.5,4,true);
+      ctx.fillStyle='#2f2115';
+      roundedRect(-5.7,20,11.4,6.2,3,true);
+      ctx.restore();
+    }
+    drawSheepLeg(x+34,y+79,legA);
+    drawSheepLeg(x+50,y+80,legB);
+    drawSheepLeg(x+76,y+80,legA);
+    drawSheepLeg(x+92,y+79,legB);
 
     // cloud-like head fluff around entire face
     ctx.fillStyle=woolG;
     const headPuffs = [
-      [104,31,6],[112,26,7],[121,30,6],
-      [101,40,5],[99,50,5],
-      [107,60,5],[117,61,5],[126,56,5],
-      [129,46,5],[126,36,5],
-      [109,37,4],
-      [112,36,3.8] // fill tiny transparent gap above left eye
+      [104,31,6.5],[112,26,7.5],[121,30,6.5],
+      [101,40,5.5],[99,50,5.3],
+      [107,60,5.3],[117,61,5.3],[126,56,5.5],
+      [129,46,5.4],[126,36,5.4],
+      [109,37,4.4],[116,36,4.2]
     ];
     for(const [px,py,pr] of headPuffs){
       ctx.beginPath(); ctx.arc(x+px,y+py+oy,pr,0,Math.PI*2); ctx.fill();
     }
 
-    // soft face
-    const faceG = ctx.createLinearGradient(x+106,y+30+oy,x+130,y+62+oy);
+    // little sheep ear, tucked behind the face
+    const earG = ctx.createLinearGradient(x+126,y+42+oy,x+137,y+55+oy);
+    earG.addColorStop(0,pal.faceMid);
+    earG.addColorStop(1,pal.muzzle);
+    ctx.fillStyle=earG;
+    ctx.beginPath();
+    ctx.ellipse(x+132,y+49+oy,6.5,9,0.62,0,Math.PI*2);
+    ctx.fill();
+    ctx.fillStyle='rgba(111,69,28,.18)';
+    ctx.beginPath(); ctx.ellipse(x+133,y+50+oy,2.2,5.3,0.62,0,Math.PI*2); ctx.fill();
+
+    // soft sheep face
+    const faceG = ctx.createLinearGradient(x+106,y+30+oy,x+130,y+64+oy);
     faceG.addColorStop(0,pal.faceTop);
     faceG.addColorStop(0.52,pal.faceMid);
     faceG.addColorStop(1,pal.faceBot);
     ctx.fillStyle=faceG;
     ctx.beginPath();
-    ctx.moveTo(x+106,y+44+oy);
-    ctx.quadraticCurveTo(x+108,y+33+oy,x+117,y+32+oy);
-    ctx.quadraticCurveTo(x+127,y+33+oy,x+129,y+42+oy);
-    ctx.quadraticCurveTo(x+130,y+52+oy,x+124,y+59+oy);
-    ctx.quadraticCurveTo(x+116,y+64+oy,x+108,y+59+oy);
-    ctx.quadraticCurveTo(x+104,y+53+oy,x+106,y+44+oy);
+    ctx.moveTo(x+105.5,y+44+oy);
+    ctx.quadraticCurveTo(x+107.8,y+33+oy,x+117,y+32+oy);
+    ctx.quadraticCurveTo(x+128,y+33+oy,x+130,y+43+oy);
+    ctx.quadraticCurveTo(x+131.5,y+53+oy,x+124.5,y+60.5+oy);
+    ctx.quadraticCurveTo(x+116,y+65.5+oy,x+108,y+60+oy);
+    ctx.quadraticCurveTo(x+103.8,y+53+oy,x+105.5,y+44+oy);
     ctx.closePath();
     ctx.fill();
 
-    // muzzle
+    // muzzle and cheek
     ctx.fillStyle=pal.muzzle;
-    ctx.beginPath(); ctx.ellipse(x+121,y+52+oy,8.2,7.0,0,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(x+121.4,y+53.2+oy,8.6,7.2,-0.05,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='rgba(255,255,255,.30)';
+    ctx.beginPath(); ctx.arc(x+114,y+54+oy,2.4,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='rgba(150,82,18,.13)';
+    ctx.beginPath(); ctx.arc(x+127,y+54+oy,2.4,0,Math.PI*2); ctx.fill();
 
     // eyes
     ctx.fillStyle='#111827';
-    ctx.beginPath(); ctx.arc(x+114,y+42+oy,2.8,0,Math.PI*2); ctx.fill();
-    ctx.beginPath(); ctx.arc(x+122,y+42+oy,2.8,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(x+114,y+43+oy,2.8,3.2,0,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(x+122.2,y+43+oy,2.8,3.2,0,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='rgba(255,255,255,.82)';
+    ctx.beginPath(); ctx.arc(x+113.1,y+41.8+oy,0.9,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(x+121.3,y+41.8+oy,0.9,0,Math.PI*2); ctx.fill();
 
-    // smile slightly up and left
+    // warm smile and tiny nose
+    ctx.fillStyle='#5b3d21';
+    ctx.beginPath(); ctx.ellipse(x+120.8,y+50.2+oy,1.7,1.1,0,0,Math.PI*2); ctx.fill();
     ctx.strokeStyle='#5b3d21';
     ctx.lineWidth=2.2;
-    ctx.beginPath(); ctx.arc(x+120.5,y+53.0+oy,5.9,0.18,2.98); ctx.stroke();
+    ctx.beginPath(); ctx.arc(x+120.5,y+54.0+oy,5.7,0.18,2.98); ctx.stroke();
 
     ctx.restore();
   }
@@ -2502,19 +2557,6 @@ function drawRescue(e){
     const cw = kidsPreview.width, ch = kidsPreview.height;
     kctx.clearRect(0,0,cw,ch);
 
-    const bg = kctx.createLinearGradient(0,0,0,ch);
-    bg.addColorStop(0,'#bfefff');
-    bg.addColorStop(1,'#f8fdff');
-    kctx.fillStyle = bg;
-    kctx.fillRect(0,0,cw,ch);
-
-    kctx.fillStyle = '#102033';
-    kctx.textAlign = 'center';
-    kctx.font = 'bold 24px Impact, Arial Black, sans-serif';
-    kctx.fillText('PERSONAJES DEL JUEGO', cw/2, 34);
-    kctx.font = '14px Verdana, Arial, sans-serif';
-    kctx.fillText('Héroes, aliados y amenazas del mundo del Ñi', cw/2, 56);
-
     const cards = [
       {name:'Ñi', role:'Corre, salta y sobrevive.', kind:'hero'},
       {name:'Bruno', role:'Te da escudo', desc:'Te protege de un golpe.', kind:'rescue', person:'Bruno'},
@@ -2529,13 +2571,13 @@ function drawRescue(e){
       {name:'R9 Centinela', role:'Bloqueo frontal', desc:'Parece lento, pero te corta el paso.', kind:'obstacle', type:'log'}
     ];
 
-    const cols = 3;
-    const cardW = 286;
-    const cardH = 130;
-    const gapX = 12;
-    const gapY = 10;
-    const startX = 14;
-    const startY = 70;
+    const cols = 4;
+    const gapX = 10;
+    const gapY = 8;
+    const startX = 6;
+    const startY = 6;
+    const cardW = (cw - startX*2 - gapX*(cols-1)) / cols;
+    const cardH = 88;
 
     function roundPath(ctx2,x,y,w,h,r){
       ctx2.beginPath();
@@ -2696,7 +2738,7 @@ function drawRescue(e){
       ctx = kctx;
       GAME.time = 0;
       GAME.speed = 290;
-      groundY = () => ch - 150;
+      groundY = () => ch - 76;
       gameplayFloorY = () => groundY() + 2;
 
       for(let i=0;i<cards.length;i++){
@@ -2704,71 +2746,71 @@ function drawRescue(e){
         const row = Math.floor(i / cols);
         const x = startX + col * (cardW + gapX);
         const y = startY + row * (cardH + gapY);
-        const thumb = { x:x+10, y:y+16, w:82, h:94 };
-        const textX = x + 104;
-        const textW = cardW - 116;
+        const thumb = { x:x+8, y:y+13, w:52, h:64 };
+        const textX = x + 68;
+        const textW = cardW - 76;
 
-        kctx.fillStyle = 'rgba(255,255,255,.84)';
+        kctx.fillStyle = 'rgba(255,255,255,.78)';
         kctx.strokeStyle = '#152233';
-        kctx.lineWidth = 3;
-        rr(kctx,x,y,cardW,cardH,18,true,true);
+        kctx.lineWidth = 2.4;
+        rr(kctx,x,y,cardW,cardH,14,true,true);
 
-        kctx.fillStyle = 'rgba(255,255,255,.54)';
-        rr(kctx,thumb.x,thumb.y,thumb.w,thumb.h,14,true,false);
+        kctx.fillStyle = 'rgba(191,239,255,.28)';
+        rr(kctx,thumb.x,thumb.y,thumb.w,thumb.h,12,true,false);
 
         if (cards[i].kind === 'hero'){
-          drawInPortrait(thumb, 0.62, 140, () => {
+          drawInPortrait(thumb, 0.45, 150, () => {
             GAME.player = { x:0, y:0, w:58, h:50, vy:0, onGround:true, rolling:false, rollTimer:0, jumpsLeft:1, dead:false, deadSpin:0, flyPhase:0 };
-            drawNiStanding(0, -2);
+            drawNiStanding(-6, 12);
           });
         } else if (cards[i].kind === 'rescue'){
-          drawInPortrait(thumb, 1, 96, () => {
-            drawMiniRescue(cards[i].person, 11, 8, 0.9);
+          drawInPortrait(thumb, 1, 76, () => {
+            drawMiniRescue(cards[i].person, 3, 4, 0.64);
           });
         } else if (cards[i].kind === 'enemy'){
           if (cards[i].type === 'soldier'){
-            drawInPortrait(thumb, 0.54, 154, () => {
-              drawEnemy({ w:72, h:132, x:44, y:22, phase:0, type:'soldier' });
+            drawInPortrait(thumb, 0.42, 164, () => {
+              drawEnemy({ w:72, h:132, x:40, y:30, phase:0, type:'soldier' });
             });
           } else if (cards[i].type === 'spiked'){
-            drawInPortrait(thumb, 0.62, 152, () => {
-              drawEnemy({ w:72, h:132, x:28, y:20, phase:0, type:'spiked' });
+            drawInPortrait(thumb, 0.45, 160, () => {
+              drawEnemy({ w:72, h:132, x:28, y:28, phase:0, type:'spiked' });
             });
           } else if (cards[i].type === 'bug'){
-            drawInPortrait(thumb, 0.94, 94, () => {
-              drawEnemy({ w:72, h:40, x:6, y:43, phase:0, type:'bug' });
+            drawInPortrait(thumb, 0.78, 88, () => {
+              drawEnemy({ w:72, h:40, x:4, y:42, phase:0, type:'bug' });
             });
           } else if (cards[i].type === 'blob'){
-            drawInPortrait(thumb, 0.82, 112, () => {
-              drawEnemy({ w:60, h:50, x:20, y:14, phase:0, type:'blob' });
+            drawInPortrait(thumb, 0.70, 106, () => {
+              drawEnemy({ w:60, h:50, x:15, y:18, phase:0, type:'blob' });
             });
           } else {
-            drawInPortrait(thumb, 0.9, 100, () => {
-              drawEnemy({ w:58, h:84, x:14, y:16, phase:0, type:'alien' });
+            drawInPortrait(thumb, 0.72, 104, () => {
+              drawEnemy({ w:58, h:84, x:10, y:18, phase:0, type:'alien' });
             });
           }
         } else if (cards[i].kind === 'obstacle'){
-          drawInPortrait(thumb, 1, 96, () => {
-            drawObstacle({ x:14, y:24, w:54, h:64, phase:0, type:cards[i].type });
+          drawInPortrait(thumb, 0.82, 92, () => {
+            drawObstacle({ x:10, y:24, w:54, h:64, phase:0, type:cards[i].type });
           });
         }
 
         kctx.textAlign = 'left';
         kctx.fillStyle = '#102033';
-        kctx.font = 'bold 18px Impact, Arial Black, sans-serif';
-        kctx.fillText(cards[i].name, textX, y+28);
+        kctx.font = 'bold 13px Impact, Arial Black, sans-serif';
+        kctx.fillText(cards[i].name, textX, y+24);
 
-        kctx.font = 'bold 12px Verdana, Arial, sans-serif';
+        kctx.font = 'bold 9.5px Verdana, Arial, sans-serif';
         const roleText = cards[i].kind === 'hero' ? 'CORRE, SALTA Y SOBREVIVE.' : cards[i].role.toUpperCase();
         const roleLines = wrapLines(kctx, roleText, textW, 2);
         for (let r=0;r<roleLines.length;r++){
-          kctx.fillText(roleLines[r], textX, y+52 + r*14);
+          kctx.fillText(roleLines[r], textX, y+42 + r*10.5);
         }
 
         kctx.fillStyle = '#2e4158';
-        kctx.font = '14px Verdana, Arial, sans-serif';
+        kctx.font = '10px Verdana, Arial, sans-serif';
         const desc = cards[i].kind === 'hero' ? 'Corre, salta y sobrevive.' : cards[i].desc;
-        drawWrapped(kctx, desc, textX, y+76 + (roleLines.length - 1)*14, textW, 16, 3);
+        drawWrapped(kctx, desc, textX, y+59 + (roleLines.length - 1)*10.5, textW, 11.2, 3);
       }
     } finally {
       ctx = oldCtx;
