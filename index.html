@@ -12,7 +12,7 @@
 <meta name="description" content="Corre, salta y rescata amigos en El Juego del Ñi." />
 <link rel="manifest" href="manifest.webmanifest" />
 <link rel="apple-touch-icon" href="icons/icon-192.png" />
-<title>El Juego del Ñi - V106</title>
+<title>El Juego del Ñi - V108</title>
 <style>
   :root{
     --ui:#152233;
@@ -145,23 +145,107 @@
   .ctrl{
     flex:1;
     min-height:78px;
-    border-radius:22px;
-    border:4px solid var(--ui);
+    border-radius:24px;
+    border:4px solid #0e1726;
     display:flex;
     align-items:center;
     justify-content:center;
+    gap:12px;
     font-size:26px;
     font-weight:900;
     user-select:none;
     pointer-events:auto;
-    box-shadow:0 12px 22px rgba(0,0,0,.18), inset 0 -4px 0 rgba(0,0,0,.12);
-    letter-spacing:1px
+    box-shadow:0 12px 22px rgba(0,0,0,.22), inset 0 -5px 0 rgba(0,0,0,.18), inset 0 3px 0 rgba(255,255,255,.42);
+    letter-spacing:1px;
+    text-shadow:0 2px 0 rgba(255,255,255,.35);
+    position:relative;
+    overflow:hidden;
+    transition:transform .08s ease, filter .08s ease
   }
-  .ctrl.jump{background:rgba(255,231,120,.94)} .ctrl.roll{background:rgba(255,182,80,.94)}
+  .ctrl::before{
+    content:'↑';
+    width:34px;
+    height:34px;
+    flex:0 0 auto;
+    border:3px solid currentColor;
+    border-radius:50%;
+    background:rgba(255,255,255,.34);
+    box-shadow:inset 0 2px 0 rgba(255,255,255,.55);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:24px;
+    line-height:1;
+    font-family:Arial,sans-serif
+  }
+  .ctrl.jump{background:linear-gradient(to bottom,#fff59d,#ffd54f 58%,#f5b82e);color:#111827}
+  .ctrl.roll{background:linear-gradient(to bottom,#ffc96b,#ff9f35 58%,#e97714);color:#111827}
+  .ctrl.roll::before{content:'↓'}
+  .ctrl:active{transform:translateY(3px);filter:saturate(1.08);box-shadow:0 7px 14px rgba(0,0,0,.20), inset 0 -2px 0 rgba(0,0,0,.18), inset 0 2px 0 rgba(255,255,255,.35)}
+  .rotate-screen{
+    position:absolute;
+    inset:0;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:22px;
+    background:linear-gradient(to bottom, rgba(134,213,255,.98), rgba(238,252,255,.98));
+    z-index:20;
+    text-align:center
+  }
+  .rotate-card{
+    width:min(560px,92vw);
+    background:linear-gradient(to bottom, rgba(255,253,242,.98), rgba(255,247,221,.96));
+    border:5px solid var(--ui);
+    border-radius:24px;
+    padding:22px;
+    box-shadow:0 18px 50px rgba(0,0,0,.24)
+  }
+  .rotate-phone{
+    width:92px;
+    height:56px;
+    border:7px solid #102033;
+    border-radius:16px;
+    margin:0 auto 14px;
+    background:linear-gradient(to bottom,#dff8ff,#fff7d9);
+    box-shadow:0 10px 22px rgba(0,0,0,.18)
+  }
+  .rotate-card h2{font-size:clamp(28px,7vw,44px);margin-bottom:8px}
+  .rotate-card p{font-size:16px;margin:0;color:#334155}
   .hide{display:none!important}
 
   @media (max-width: 900px){
     .ctrl{min-height:64px;font-size:20px}
+  }
+
+  @media (max-width: 700px){
+    #hud{top:6px;left:6px;right:6px;gap:5px}
+    .hudbox{
+      flex:1 1 0;
+      min-width:0;
+      border-width:2px;
+      border-radius:12px;
+      padding:7px 6px;
+      font-size:12px;
+      line-height:1.15;
+      letter-spacing:0;
+      overflow:hidden;
+      text-overflow:ellipsis
+    }
+    #controls{bottom:10px;left:10px;right:10px;gap:10px}
+    .ctrl{
+      min-height:58px;
+      border-width:3px;
+      border-radius:18px;
+      font-size:20px;
+      letter-spacing:0
+    }
+    .ctrl::before{width:26px;height:26px;border-width:2px;font-size:19px}
+    #message{top:52px;font-size:13px;max-width:88vw}
+  }
+
+  @media (orientation: portrait) and (max-width: 700px){
+    body.needs-landscape #rotateScreen{display:flex}
   }
 
 .legend-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:14px}
@@ -243,6 +327,14 @@
     <div class="ctrl roll" id="rollBtn">RODAR</div>
   </div>
 
+  <div class="rotate-screen" id="rotateScreen">
+    <div class="rotate-card">
+      <div class="rotate-phone"></div>
+      <h2>GIRA EL TELÉFONO</h2>
+      <p>El Juego del Ñi se juega mejor de lado.</p>
+    </div>
+  </div>
+
   <div class="overlay" id="startScreen">
     <div class="panel">
       <div class="title-stack">
@@ -263,10 +355,10 @@
   </div>
 
   <div class="overlay hide" id="kidsScreen">
-    <div class="panel" style="width:min(1020px,92vw);max-height:none;overflow:visible;padding:16px 16px 14px 16px">
+    <div class="panel" style="width:min(1020px,92vw);max-height:none;overflow:hidden;padding:16px 16px 14px 16px">
       <h2 style="margin-bottom:4px">VER PERSONAJES</h2>
       <p class="small" style="margin-top:2px;margin-bottom:8px">Héroes, aliados y amenazas del mundo del Ñi.</p>
-      <canvas id="kidsPreview" width="930" height="650" style="width:min(930px,88vw,calc(143.08vh - 272px));height:auto;border:3px solid #152233;border-radius:18px;background:linear-gradient(to bottom,#bfefff,#f6fdff);display:block;margin:8px auto 0 auto"></canvas>
+      <canvas id="kidsPreview" width="930" height="650" style="width:min(930px,calc(100vw - 78px),calc(143.08vh - 272px));height:auto;border:3px solid #152233;border-radius:18px;background:linear-gradient(to bottom,#bfefff,#f6fdff);display:block;margin:8px auto 0 auto"></canvas>
       <div class="btnrow">
         <button id="backFromKidsBtn">VOLVER</button>
       </div>
@@ -282,7 +374,7 @@
           <h3>iPhone</h3>
           <ol>
             <li>Abrir el link en Safari.</li>
-            <li>Tocar Compartir.</li>
+            <li>Tocar el botón Compartir de Safari.</li>
             <li>Elegir Agregar a pantalla de inicio.</li>
           </ol>
         </div>
@@ -386,14 +478,28 @@
     'Ñi quedó científicamente destruido'
   ];
 
-  const W = () => canvas.width;
-  const H = () => canvas.height;
+  function gameScale(){
+    const portraitPhone = window.innerWidth <= 700 && window.innerHeight > window.innerWidth;
+    const landscapePhone = window.innerHeight <= 520 && window.innerWidth > window.innerHeight;
+    if (portraitPhone) return 0.74;
+    if (landscapePhone) return 0.84;
+    return 1;
+  }
+
+  function updateOrientationHint(){
+    const shouldRotate = window.innerWidth <= 700 && window.innerHeight > window.innerWidth;
+    document.body.classList.toggle('needs-landscape', shouldRotate);
+  }
+
+  const W = () => canvas.width / gameScale();
+  const H = () => canvas.height / gameScale();
   let groundY = () => H() - 145;
   let gameplayFloorY = () => groundY() + 2;
 
-  function resizeCanvas(){ canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+  function resizeCanvas(){ canvas.width = window.innerWidth; canvas.height = window.innerHeight; updateOrientationHint(); }
   resizeCanvas();
   window.addEventListener('resize', resizeCanvas);
+  window.addEventListener('orientationchange', () => setTimeout(resizeCanvas, 250));
 
   function rand(min,max){ return Math.random()*(max-min)+min; }
   function roundedRect(x,y,w,h,r,fill){
@@ -452,7 +558,9 @@
   }
 
   function playerTemplate(){
-    return { x:170, y:groundY()-100, w:112, h:100, vy:0, onGround:true, rolling:false, rollTimer:0, jumpsLeft:1, dead:false, deadSpin:0, flyPhase:0 };
+    const scale = gameScale();
+    const x = scale < 1 ? Math.max(76, W() * 0.16) : 170;
+    return { x, y:groundY()-100, w:112, h:100, vy:0, onGround:true, rolling:false, rollTimer:0, jumpsLeft:1, dead:false, deadSpin:0, flyPhase:0 };
   }
 
   function resetGame(){
@@ -681,7 +789,9 @@
   }
 
   function spawnCoin(){
-    GAME.entities.push({ type:'coin', kind:'coin', w:36, h:36, x:W()+rand(30,90), y:groundY()-rand(96,200), bob:rand(0,Math.PI*2) });
+    const topClearance = gameScale() < 1 ? 150 : 96;
+    const maxHeight = gameScale() < 1 ? 260 : 200;
+    GAME.entities.push({ type:'coin', kind:'coin', w:36, h:36, x:W()+rand(30,90), y:groundY()-rand(topClearance,maxHeight), bob:rand(0,Math.PI*2) });
   }
 
   function weightedChoice(items){
@@ -2137,17 +2247,25 @@ function drawRescue(e){
   }
 
   function drawAll(){
-    ctx.clearRect(0,0,W(),H()); drawBackground();
-    if (GAME.state === 'playing' || GAME.state === 'gameover'){
-      for(const e of GAME.entities){
-        if (e.kind === 'obstacle') drawObstacle(e);
-        else if (e.kind === 'enemy') drawEnemy(e);
-        else if (e.kind === 'coin') drawCoin(e);
-        else if (e.kind === 'rescue') drawRescue(e);
+    const scale = gameScale();
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.save();
+    ctx.scale(scale, scale);
+    drawBackground();
+    try {
+      if (GAME.state === 'playing' || GAME.state === 'gameover'){
+        for(const e of GAME.entities){
+          if (e.kind === 'obstacle') drawObstacle(e);
+          else if (e.kind === 'enemy') drawEnemy(e);
+          else if (e.kind === 'coin') drawCoin(e);
+          else if (e.kind === 'rescue') drawRescue(e);
+        }
+        drawPlayer(); drawParticles();
+      } else {
+        const preview=playerTemplate(); GAME.player=preview; drawNiStanding(preview.x, preview.y); GAME.player=null;
       }
-      drawPlayer(); drawParticles();
-    } else {
-      const preview=playerTemplate(); GAME.player=preview; drawNiStanding(preview.x, preview.y); GAME.player=null;
+    } finally {
+      ctx.restore();
     }
   }
 
@@ -2180,15 +2298,19 @@ function drawRescue(e){
       if (!jumpHeld && !rollHeld) comboConsumed = false;
     };
 
-    el.addEventListener('pointerdown', down, {passive:false});
-    el.addEventListener('pointerup', up, {passive:false});
-    el.addEventListener('pointercancel', up, {passive:false});
-    el.addEventListener('touchstart', down, {passive:false});
-    el.addEventListener('touchend', up, {passive:false});
-    el.addEventListener('touchcancel', up, {passive:false});
-    el.addEventListener('mousedown', down, {passive:false});
-    el.addEventListener('mouseup', up, {passive:false});
-    el.addEventListener('mouseleave', up, {passive:false});
+    if (window.PointerEvent){
+      el.addEventListener('pointerdown', down, {passive:false});
+      el.addEventListener('pointerup', up, {passive:false});
+      el.addEventListener('pointercancel', up, {passive:false});
+      el.addEventListener('pointerleave', up, {passive:false});
+    } else {
+      el.addEventListener('touchstart', down, {passive:false});
+      el.addEventListener('touchend', up, {passive:false});
+      el.addEventListener('touchcancel', up, {passive:false});
+      el.addEventListener('mousedown', down, {passive:false});
+      el.addEventListener('mouseup', up, {passive:false});
+      el.addEventListener('mouseleave', up, {passive:false});
+    }
   }
 
 
