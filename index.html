@@ -11,7 +11,7 @@
 <meta name="description" content="Corre, salta y rescata amigos en El Juego del Ñi." />
 <link rel="manifest" href="manifest.webmanifest" />
 <link rel="apple-touch-icon" href="icons/icon-192.png" />
-  <title>El Juego del Ñi - V246</title>
+  <title>El Juego del Ñi - V247</title>
 <style>
   :root{
     --ui:#152233;
@@ -26,6 +26,12 @@
   }
   body{position:fixed;inset:0;font-family:Verdana,Arial,sans-serif}
   #wrap{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;background:#102033}
+  #wrap,#game,#controls,#controls *{
+    user-select:none!important;
+    -webkit-user-select:none!important;
+    -webkit-touch-callout:none!important;
+    -webkit-user-drag:none!important
+  }
   canvas{display:block;width:100%;height:100%;touch-action:none}
   .overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:18px;pointer-events:none}
   .panel{
@@ -278,7 +284,6 @@
     filter:saturate(1.14) brightness(.96);
     box-shadow:0 6px 12px rgba(0,0,0,.26),inset 0 -3px 0 rgba(0,0,0,.20),inset 0 3px 0 rgba(255,255,255,.38)
   }
-  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
   .control-note{margin:12px 0 0;font-size:13px;font-weight:800;color:#405168}
   .touch-controls{display:none}
   .rotate-screen{
@@ -563,11 +568,9 @@
   <div id="controls" class="hide" aria-label="Controles táctiles">
     <button class="ctrl jump" id="jumpBtn" type="button" aria-label="Saltar" title="Saltar">
       <canvas class="ctrl-icon" id="jumpIcon" width="224" height="224" aria-hidden="true"></canvas>
-      <span class="sr-only">Saltar</span>
     </button>
     <button class="ctrl roll" id="rollBtn" type="button" aria-label="Rodar" title="Rodar">
       <canvas class="ctrl-icon" id="rollIcon" width="224" height="224" aria-hidden="true"></canvas>
-      <span class="sr-only">Rodar</span>
     </button>
   </div>
 
@@ -5890,7 +5893,7 @@ function drawRescue(e){
 
   function bindPress(el, kind, fn){
     const down=(ev)=>{
-      ev.preventDefault();
+      if (ev.cancelable) ev.preventDefault();
       el.classList.add('is-pressed');
       if (kind === 'jump') jumpHeld = true;
       if (kind === 'roll') rollHeld = true;
@@ -5900,35 +5903,57 @@ function drawRescue(e){
       }
     };
     const up=(ev)=>{
+      if (ev && ev.cancelable) ev.preventDefault();
       el.classList.remove('is-pressed');
       if (kind === 'jump') jumpHeld = false;
       if (kind === 'roll') rollHeld = false;
       if (!jumpHeld && !rollHeld) comboConsumed = false;
     };
 
+    // En iOS se usa touchstart de forma activa: cancelar su comportamiento
+    // predeterminado evita la lupa y el menú copiar/pegar del doble toque.
+    el.addEventListener('touchstart', down, {passive:false});
+    el.addEventListener('touchend', up, {passive:false});
+    el.addEventListener('touchcancel', up, {passive:false});
+
     if (window.PointerEvent){
-      el.addEventListener('pointerdown', down, {passive:false});
-      el.addEventListener('pointerup', up, {passive:false});
-      el.addEventListener('pointercancel', up, {passive:false});
-      el.addEventListener('pointerleave', up, {passive:false});
+      const isMouseOrPen=ev=>ev.pointerType==='mouse' || ev.pointerType==='pen';
+      const pointerDown=(ev)=>{ if (isMouseOrPen(ev)) down(ev); };
+      const pointerUp=(ev)=>{ if (isMouseOrPen(ev)) up(ev); };
+      el.addEventListener('pointerdown', pointerDown, {passive:false});
+      el.addEventListener('pointerup', pointerUp, {passive:false});
+      el.addEventListener('pointercancel', pointerUp, {passive:false});
+      el.addEventListener('pointerleave', pointerUp, {passive:false});
     } else {
-      el.addEventListener('touchstart', down, {passive:false});
-      el.addEventListener('touchend', up, {passive:false});
-      el.addEventListener('touchcancel', up, {passive:false});
       el.addEventListener('mousedown', down, {passive:false});
       el.addEventListener('mouseup', up, {passive:false});
       el.addEventListener('mouseleave', up, {passive:false});
     }
   }
 
-  // Evita que una pulsación doble abra selección, copiar/pegar o el menú
-  // contextual de Safari. Las dos pulsaciones siguen llegando a pointerdown,
-  // por lo que el doble salto conserva su respuesta inmediata.
+  // Protección capturada para los gestos nativos de WebKit. No detiene la
+  // propagación: touchstart sigue llegando al botón y conserva el doble salto.
+  let lastControlTouchAt=0;
+  const suppressNativeTouchUI=event=>{
+    lastControlTouchAt=Date.now();
+    if (event.cancelable) event.preventDefault();
+  };
+  for (const eventName of ['touchstart','touchmove','touchend','gesturestart','gesturechange','gestureend']){
+    controls.addEventListener(eventName,suppressNativeTouchUI,{capture:true,passive:false});
+  }
+
+  // Cubre además selección, arrastre, doble clic y menú contextual sintético.
   for (const el of [controls,jumpBtn,rollBtn]){
     for (const eventName of ['contextmenu','selectstart','dragstart','dblclick']){
       el.addEventListener(eventName, event => event.preventDefault(), {passive:false});
     }
   }
+
+  document.addEventListener('selectionchange',()=>{
+    if (Date.now()-lastControlTouchAt>1200) return;
+    const selection=document.getSelection && document.getSelection();
+    if (selection && selection.rangeCount) selection.removeAllRanges();
+  });
 
   // Gamepad API: disposición estándar compartida por DualShock/DualSense y
   // la mayoría de los mandos compatibles. L1 es el botón 4; R1, el botón 5.
