@@ -11,7 +11,7 @@
 <meta name="description" content="Corre, salta y rescata amigos en El Juego del Ñi." />
 <link rel="manifest" href="manifest.webmanifest" />
 <link rel="apple-touch-icon" href="icons/icon-192.png" />
-  <title>El Juego del Ñi - V245</title>
+  <title>El Juego del Ñi - V246</title>
 <style>
   :root{
     --ui:#152233;
@@ -315,6 +315,8 @@
 
   @media (max-width:1024px),(hover:none),(pointer:coarse){
     #controls{display:flex}
+    #message{top:48px}
+    #eventBanner:not(.last-chance){top:88px}
     .desktop-controls{display:none}
     .touch-controls{display:inline}
   }
@@ -348,7 +350,7 @@
       outline-width:2px
     }
     #message{top:46px;font-size:12px;max-width:72vw;padding:6px 12px}
-    #eventBanner{top:14%;max-width:72vw;font-size:20px;padding:7px 15px;border-width:2px}
+    #eventBanner{top:82px;max-width:72vw;font-size:20px;padding:7px 15px;border-width:2px}
     #eventBanner.small{font-size:16px}
     #eventBanner.last-chance{top:50%;width:min(78vw,570px);max-width:none;padding:13px 22px;border-width:3px;border-radius:21px}
     .last-chance strong{margin:5px 0 7px;font-size:30px}
@@ -374,7 +376,7 @@
     .wool-life{width:17px;height:14px}
     .wool-life::before{width:8px;height:8px}
     .wool-life::after{width:9px;height:9px}
-    #eventBanner{top:15%;max-width:58vw}
+    #eventBanner{top:86px;max-width:58vw}
     #eventBanner.last-chance{top:50%;max-width:none}
     .result-card{width:min(320px,42vw)}
   }
@@ -1192,8 +1194,14 @@
     updateOrientationHint();
   }
   resizeCanvas();
-  window.addEventListener('resize', resizeCanvas);
-  window.addEventListener('orientationchange', () => setTimeout(resizeCanvas, 250));
+  window.addEventListener('resize', () => {
+    resizeCanvas();
+    requestAnimationFrame(layoutNotices);
+  });
+  window.addEventListener('orientationchange', () => setTimeout(() => {
+    resizeCanvas();
+    layoutNotices();
+  }, 250));
 
   function rand(min,max){ return Math.random()*(max-min)+min; }
   function roundedRect(x,y,w,h,r,fill){
@@ -1202,11 +1210,45 @@
     ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); if(fill) ctx.fill();
   }
 
+  function usesCompactNoticeLayout(){
+    return Boolean(window.matchMedia && window.matchMedia('(max-width:1024px), (hover:none), (pointer:coarse)').matches);
+  }
+
+  function layoutNotices(){
+    // El aviso de última oportunidad es una pantalla centrada y no participa
+    // de las dos franjas compactas de información.
+    if (eventBanner.classList.contains('last-chance')){
+      eventBanner.style.removeProperty('top');
+      return;
+    }
+
+    if (!usesCompactNoticeLayout()){
+      message.style.removeProperty('top');
+      eventBanner.style.removeProperty('top');
+      return;
+    }
+
+    // En teléfonos horizontales la altura disponible cambia según Safari,
+    // Chrome y las zonas seguras. Se toma la posición real del HUD para que
+    // los dos mensajes siempre empiecen debajo de él y nunca se superpongan.
+    const hudRect=hud.getBoundingClientRect();
+    const firstLaneTop=Math.max(44,Math.ceil(hudRect.bottom+7));
+    message.style.top=firstLaneTop+'px';
+
+    const measuredMessageHeight=message.offsetHeight || 0;
+    const reservedMessageHeight=Math.max(measuredMessageHeight,30);
+    eventBanner.style.top=(firstLaneTop+reservedMessageHeight+8)+'px';
+  }
+
   function showMessage(text, ms=1200){
     message.textContent = text;
     message.style.display = 'block';
+    requestAnimationFrame(layoutNotices);
     clearTimeout(showMessage._t);
-    showMessage._t = setTimeout(() => message.style.display = 'none', ms);
+    showMessage._t = setTimeout(() => {
+      message.style.display = 'none';
+      layoutNotices();
+    }, ms);
   }
 
   function deathMessageFor(kind, type){
@@ -1243,14 +1285,19 @@
     eventBanner.textContent = text;
     eventBanner.className = small ? 'small' : '';
     eventBanner.style.display = 'block';
+    requestAnimationFrame(layoutNotices);
     clearTimeout(showBanner._t);
-    showBanner._t = setTimeout(() => eventBanner.style.display = 'none', ms);
+    showBanner._t = setTimeout(() => {
+      eventBanner.style.display = 'none';
+      layoutNotices();
+    }, ms);
   }
 
   function showLastChanceNotice(){
     const region=currentRegion();
     clearTimeout(showBanner._t);
     message.style.display='none';
+    eventBanner.style.removeProperty('top');
     eventBanner.className='last-chance';
     eventBanner.innerHTML='<span class="lc-eyebrow">ÚLTIMA OPORTUNIDAD</span><strong>REGIÓN '+(GAME.regionIndex+1)+'</strong><span class="lc-life">1 MECHÓN DE LUZ</span><small>Vuelve a rescatar a '+region.child+' y vence al Centinela</small>';
     eventBanner.style.display='block';
