@@ -11,7 +11,7 @@
 <meta name="description" content="Corre, salta y rescata amigos en El Juego del Ñi." />
 <link rel="manifest" href="manifest.webmanifest" />
 <link rel="apple-touch-icon" href="icons/icon-192.png" />
-  <title>El Juego del Ñi - V247</title>
+  <title>El Juego del Ñi - V248</title>
 <style>
   :root{
     --ui:#152233;
@@ -104,6 +104,44 @@
     padding-left:20px;
     line-height:1.45;
     font-size:14px
+  }
+  .install-intro{
+    max-width:610px;
+    margin:5px auto 0;
+    color:#edf7ff;
+    font-size:15px;
+    line-height:1.4
+  }
+  .install-intro strong{color:#ffd84b}
+  .install-card.recommended{
+    border-color:#8fe9ff;
+    box-shadow:0 0 0 2px rgba(143,233,255,.12),0 12px 28px rgba(0,0,0,.18)
+  }
+  .install-card.device-hidden{display:none}
+  .install-card li{padding-left:3px;margin:7px 0}
+  .install-symbol{
+    display:inline-flex;
+    width:27px;
+    height:27px;
+    margin:0 4px;
+    align-items:center;
+    justify-content:center;
+    vertical-align:middle;
+    border:2px solid #8fe9ff;
+    border-radius:8px;
+    color:#8fe9ff;
+    background:rgba(143,233,255,.08);
+    font:900 22px/1 Arial,sans-serif
+  }
+  .install-symbol svg{width:19px;height:19px;display:block;stroke:currentColor}
+  .install-fallback{
+    margin:9px 0 0;
+    padding:8px 10px;
+    border-radius:10px;
+    background:rgba(143,233,255,.09);
+    color:#dceaf4;
+    font-size:12px;
+    line-height:1.35
   }
   #hud{position:absolute;top:10px;left:10px;right:10px;display:flex;justify-content:flex-start;gap:7px;pointer-events:none;z-index:6}
   .hudbox{
@@ -485,9 +523,26 @@
 #installScreen .panel{color:#edf7ff;background:linear-gradient(145deg,rgba(11,29,45,.97),rgba(24,42,57,.94));border:2px solid rgba(255,255,255,.7);box-shadow:0 24px 60px rgba(0,0,0,.48)}
 #installScreen h2{color:#ffd84b;text-shadow:0 3px 0 #75400e,0 8px 18px rgba(0,0,0,.32)}
 #installScreen .small{color:#dceaf4}
-#installScreen .install-card{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.24)}
+  #installScreen .install-card{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.24)}
 #installScreen .install-card h3{color:#8fe9ff}
-#installScreen #closeInstallBtn{background:linear-gradient(to bottom,#f7fbff,#b9d7eb)}
+  #installScreen #closeInstallBtn{background:linear-gradient(to bottom,#f7fbff,#b9d7eb)}
+
+  @media (max-height:540px) and (orientation:landscape){
+    #installScreen{padding:8px}
+    #installScreen .panel{padding:11px 14px;width:min(820px,97vw)!important;max-height:96vh;overflow:auto}
+    #installScreen h2{font-size:24px;margin-bottom:2px}
+    #installScreen .install-intro{font-size:12px;line-height:1.25;margin-top:2px}
+    #installScreen .install-steps{margin:8px 0 2px;gap:8px}
+    #installScreen .install-card{padding:9px}
+    #installScreen .install-card h3{font-size:17px;margin-bottom:4px}
+    #installScreen .install-card ol{font-size:12px;line-height:1.25}
+    #installScreen .install-card li{margin:4px 0}
+    #installScreen .install-symbol{width:23px;height:23px;border-radius:7px}
+    #installScreen .install-symbol svg{width:16px;height:16px}
+    #installScreen .install-fallback{margin-top:5px;padding:5px 7px;font-size:10px}
+    #installScreen .btnrow{margin-top:7px}
+    #installScreen #closeInstallBtn{padding:7px 13px;font-size:12px}
+  }
 
 /* introducción narrativa */
 #introScreen{padding:0;background:#071421;overflow:hidden;z-index:12;pointer-events:auto}
@@ -650,23 +705,40 @@
   <div class="overlay hide" id="installScreen">
     <div class="panel" style="width:min(760px,94vw)">
       <h2>INSTALAR EL JUEGO</h2>
-      <p class="small">Elige tu dispositivo y sigue estos pasos para dejar el juego en la pantalla de inicio.</p>
+      <p class="install-intro" id="installIntro"><strong>Ya tienes el juego abierto.</strong> Ahora agrégalo a tu pantalla de inicio para jugar en pantalla completa.</p>
       <div class="install-steps">
-        <div class="install-card">
+        <div class="install-card" data-install-platform="ios">
           <h3>iPhone o iPad</h3>
           <ol>
-            <li>Abrir el link en Safari.</li>
-            <li>Tocar el botón Compartir de Safari.</li>
-            <li>Elegir Agregar a pantalla de inicio.</li>
+            <li>
+              Busca y toca <strong>Compartir</strong>
+              <span class="install-symbol" aria-label="ícono Compartir">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3m0 0L8 7m4-4 4 4"/><path d="M7 10H5.7A1.7 1.7 0 0 0 4 11.7v7.6A1.7 1.7 0 0 0 5.7 21h12.6a1.7 1.7 0 0 0 1.7-1.7v-7.6a1.7 1.7 0 0 0-1.7-1.7H17"/></svg>
+              </span>
+              en la barra de Safari. Puede estar abajo o dentro de <strong>•••</strong>.
+            </li>
+            <li>
+              Desliza el menú y toca <strong>Agregar a pantalla de inicio</strong>
+              <span class="install-symbol" aria-label="ícono Agregar a pantalla de inicio">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="3"/><path d="M12 8v8M8 12h8"/></svg>
+              </span>.
+            </li>
+            <li>Activa <strong>Abrir como app</strong> si aparece y toca <strong>Agregar</strong>.</li>
           </ol>
+          <p class="install-fallback">¿No aparece esa opción? Abre esta misma página en <strong>Safari</strong> y vuelve a tocar INSTALAR.</p>
         </div>
-        <div class="install-card">
+        <div class="install-card" data-install-platform="android">
           <h3>Android</h3>
           <ol>
-            <li>Abrir el link en Chrome.</li>
-            <li>Tocar Instalar si aparece.</li>
-            <li>Si no aparece, usar el menú y Agregar a pantalla principal.</li>
+            <li>
+              Busca y toca el menú
+              <span class="install-symbol" aria-label="ícono de menú">⋮</span>
+              a la derecha de la barra del navegador.
+            </li>
+            <li>Toca <strong>Agregar a pantalla principal</strong> o <strong>Instalar aplicación</strong>.</li>
+            <li>Elige <strong>Instalar</strong> y confirma.</li>
           </ol>
+          <p class="install-fallback">¿No aparece esa opción? Abre esta misma página en <strong>Chrome</strong> y vuelve a tocar INSTALAR.</p>
         </div>
       </div>
       <div class="btnrow">
@@ -715,6 +787,8 @@
   const menuBtn = document.getElementById('menuBtn');
   const installBtn = document.getElementById('installBtn');
   const installScreen = document.getElementById('installScreen');
+  const installIntro = document.getElementById('installIntro');
+  const installCards = [...document.querySelectorAll('[data-install-platform]')];
   const closeInstallBtn = document.getElementById('closeInstallBtn');
   const jumpBtn = document.getElementById('jumpBtn');
   const rollBtn = document.getElementById('rollBtn');
@@ -6699,6 +6773,18 @@ function drawRescue(e){
 
   function openInstallHelp(){
     if (GAME.state !== 'menu') return;
+    const ua = navigator.userAgent || '';
+    const isIOS = /iPad|iPhone|iPod/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    const isAndroid = /Android/i.test(ua);
+    const detectedPlatform = isIOS ? 'ios' : (isAndroid ? 'android' : '');
+    for (const card of installCards){
+      const matches = card.dataset.installPlatform === detectedPlatform;
+      card.classList.toggle('device-hidden', Boolean(detectedPlatform) && !matches);
+      card.classList.toggle('recommended', matches);
+    }
+    installIntro.innerHTML = detectedPlatform
+      ? '<strong>Ya tienes el juego abierto.</strong> Solo faltan estos pasos para dejarlo en tu pantalla de inicio y jugar en pantalla completa.'
+      : '<strong>Ya tienes el juego abierto.</strong> Elige tu dispositivo y sigue únicamente los pasos que faltan.';
     startScreen.classList.add('hide');
     kidsScreen.classList.add('hide');
     introScreen.classList.add('hide');
