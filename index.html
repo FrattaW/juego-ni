@@ -11,7 +11,7 @@
 <meta name="description" content="Corre, salta y rescata amigos en El Juego del Ñi." />
 <link rel="manifest" href="manifest.webmanifest" />
 <link rel="apple-touch-icon" href="icons/icon-192.png" />
-  <title>El Juego del Ñi - V248</title>
+  <title>El Juego del Ñi - V249</title>
 <style>
   :root{
     --ui:#152233;
@@ -322,6 +322,55 @@
     filter:saturate(1.14) brightness(.96);
     box-shadow:0 6px 12px rgba(0,0,0,.26),inset 0 -3px 0 rgba(0,0,0,.20),inset 0 3px 0 rgba(255,255,255,.38)
   }
+  .pause-control{
+    width:clamp(52px,10vmin,66px);
+    height:clamp(52px,10vmin,66px);
+    flex:0 0 auto;
+    padding:0;
+    border:3px solid rgba(255,255,255,.94);
+    outline:3px solid rgba(14,23,38,.82);
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    pointer-events:auto;
+    touch-action:none;
+    user-select:none;
+    -webkit-user-select:none;
+    -webkit-touch-callout:none;
+    background:linear-gradient(to bottom,#f7fbff,#9fc5dc);
+    box-shadow:0 9px 18px rgba(0,0,0,.30),inset 0 -6px 0 rgba(0,0,0,.16),inset 0 3px 0 rgba(255,255,255,.7);
+    transition:transform .07s ease,filter .07s ease,box-shadow .07s ease
+  }
+  .pause-bars{display:flex;gap:6px;align-items:center;justify-content:center;pointer-events:none}
+  .pause-bars::before,.pause-bars::after{content:'';display:block;width:7px;height:23px;border-radius:3px;background:#14263a;box-shadow:0 2px 0 rgba(255,255,255,.45)}
+  .pause-control:active,.pause-control.is-pressed{transform:scale(.90) translateY(2px);filter:brightness(.96);box-shadow:0 5px 11px rgba(0,0,0,.27),inset 0 -3px 0 rgba(0,0,0,.16)}
+  .pause-overlay{
+    z-index:18;
+    pointer-events:auto;
+    background:radial-gradient(circle at 50% 43%,rgba(42,82,111,.18),rgba(4,12,22,.70));
+    backdrop-filter:blur(5px)
+  }
+  .pause-card{
+    width:min(390px,88vw);
+    padding:24px 22px 20px;
+    text-align:center;
+    color:#eef8ff;
+    border:3px solid rgba(255,255,255,.78);
+    border-radius:26px;
+    background:linear-gradient(145deg,rgba(9,27,43,.97),rgba(27,43,59,.96));
+    box-shadow:0 24px 65px rgba(0,0,0,.52),inset 0 1px 0 rgba(255,255,255,.18)
+  }
+  .pause-emblem{
+    width:66px;height:66px;margin:0 auto 10px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(to bottom,#fff170,#ffb30c);border:3px solid #fff5b2;box-shadow:0 8px 22px rgba(255,183,16,.3),inset 0 -5px 0 rgba(107,55,3,.2)
+  }
+  .pause-emblem .pause-bars::before,.pause-emblem .pause-bars::after{height:27px;width:8px}
+  .pause-card h2{margin:0;color:#ffd84b;font-size:38px;text-shadow:0 3px 0 #75400e}
+  .pause-card p{margin:6px 0 15px;color:#d9edf5;font-size:14px;font-weight:800}
+  .pause-actions{display:grid;grid-template-columns:1.25fr .75fr;gap:9px}
+  .pause-actions button{padding:11px 13px;font-size:14px}
+  #pauseMenuBtn{background:linear-gradient(to bottom,#f3f4f6,#b8c5d0)}
   .control-note{margin:12px 0 0;font-size:13px;font-weight:800;color:#405168}
   .touch-controls{display:none}
   .rotate-screen{
@@ -392,6 +441,8 @@
       border-width:3px;
       outline-width:2px
     }
+    .pause-control{width:clamp(48px,11vmin,58px);height:clamp(48px,11vmin,58px);outline-width:2px}
+    .pause-bars::before,.pause-bars::after{width:6px;height:20px}
     #message{top:46px;font-size:12px;max-width:72vw;padding:6px 12px}
     #eventBanner{top:82px;max-width:72vw;font-size:20px;padding:7px 15px;border-width:2px}
     #eventBanner.small{font-size:16px}
@@ -422,6 +473,13 @@
     #eventBanner{top:86px;max-width:58vw}
     #eventBanner.last-chance{top:50%;max-width:none}
     .result-card{width:min(320px,42vw)}
+    .pause-card{width:min(360px,55vw);padding:13px 17px 12px;border-radius:20px}
+    .pause-emblem{width:48px;height:48px;margin-bottom:5px;border-width:2px}
+    .pause-emblem .pause-bars::before,.pause-emblem .pause-bars::after{height:21px;width:6px}
+    .pause-card h2{font-size:26px}
+    .pause-card p{margin:3px 0 8px;font-size:11px}
+    .pause-actions{gap:6px}
+    .pause-actions button{padding:7px 10px;font-size:11px;border-radius:11px}
   }
 
   @media (orientation: portrait) and (max-width: 700px){
@@ -624,9 +682,24 @@
     <button class="ctrl jump" id="jumpBtn" type="button" aria-label="Saltar" title="Saltar">
       <canvas class="ctrl-icon" id="jumpIcon" width="224" height="224" aria-hidden="true"></canvas>
     </button>
+    <button class="pause-control" id="pauseBtn" type="button" aria-label="Pausar" title="Pausar">
+      <span class="pause-bars" aria-hidden="true"></span>
+    </button>
     <button class="ctrl roll" id="rollBtn" type="button" aria-label="Rodar" title="Rodar">
       <canvas class="ctrl-icon" id="rollIcon" width="224" height="224" aria-hidden="true"></canvas>
     </button>
+  </div>
+
+  <div class="overlay hide pause-overlay" id="pauseScreen" aria-label="Juego en pausa">
+    <div class="pause-card">
+      <div class="pause-emblem" aria-hidden="true"><span class="pause-bars"></span></div>
+      <h2>PAUSA</h2>
+      <p><span class="desktop-controls">Presiona P para continuar</span><span class="touch-controls">La aventura está detenida</span></p>
+      <div class="pause-actions">
+        <button id="resumeBtn" type="button">CONTINUAR</button>
+        <button id="pauseMenuBtn" class="secondary" type="button">MENÚ</button>
+      </div>
+    </div>
   </div>
 
   <div class="rotate-screen" id="rotateScreen">
@@ -653,7 +726,7 @@
         </div>
         <div class="cover-meta">
           <span>Creado por Bruno Wagner</span>
-          <span class="controls-hint desktop-controls">ESPACIO: saltar · ↓: rodar</span>
+          <span class="controls-hint desktop-controls">ESPACIO: saltar · ↓: rodar · P: pausa</span>
           <span class="controls-hint touch-controls">Controles para pulgares</span>
         </div>
       </div>
@@ -791,7 +864,11 @@
   const installCards = [...document.querySelectorAll('[data-install-platform]')];
   const closeInstallBtn = document.getElementById('closeInstallBtn');
   const jumpBtn = document.getElementById('jumpBtn');
+  const pauseBtn = document.getElementById('pauseBtn');
   const rollBtn = document.getElementById('rollBtn');
+  const pauseScreen = document.getElementById('pauseScreen');
+  const resumeBtn = document.getElementById('resumeBtn');
+  const pauseMenuBtn = document.getElementById('pauseMenuBtn');
   const jumpIcon = document.getElementById('jumpIcon');
   const rollIcon = document.getElementById('rollIcon');
   const kidsBtn = document.getElementById('kidsBtn');
@@ -1422,7 +1499,7 @@
     GAME.collectiblePatternIndex=0; GAME.encounterCountInRegion=0; GAME.pitsInRegion=0; GAME.wormsInRegion=0; GAME.obstacleCounts={}; GAME.lastObstacleType=null; GAME.sameObstacleStreak=0; GAME.obstacleStreak=0; GAME.enemyStreak=0;
     GAME.regionStartScore=0; GAME.regionStartRescued={...GAME.rescued}; GAME.lastChanceUsed=false; GAME.pendingRegionLastChance=false; GAME.eventPauseTimer=0;
     GAME.lives=GAME.maxLives; GAME.pendingRevive=false; GAME.reviveTimer=0; GAME.boss=null; GAME.bossCheckpoint=null; GAME.bossClearedInRegion=false; GAME.deathDuringBoss=false; GAME.bossTutorialShown=false;
-    startScreen.classList.add('hide'); kidsScreen.classList.add('hide'); installScreen.classList.add('hide'); introScreen.classList.add('hide'); gameOverScreen.classList.add('hide'); hud.classList.remove('hide'); controls.classList.remove('hide');
+    startScreen.classList.add('hide'); kidsScreen.classList.add('hide'); installScreen.classList.add('hide'); introScreen.classList.add('hide'); gameOverScreen.classList.add('hide'); pauseScreen.classList.add('hide'); hud.classList.remove('hide'); controls.classList.remove('hide');
     message.style.display='none'; eventBanner.style.display='none';
     setHud(); showBanner('REGIÓN 1 · JARDINES DORADOS',1500,true); showMessage('Encuentra a Bruno', 1400);
   }
@@ -1431,7 +1508,30 @@
     GAME.state='menu';
     GAME.eventPauseTimer=0;
     clearTimeout(introAdvanceTimer); cancelAnimationFrame(introAnimationId);
-    startScreen.classList.remove('hide'); kidsScreen.classList.add('hide'); installScreen.classList.add('hide'); introScreen.classList.add('hide'); gameOverScreen.classList.add('hide'); hud.classList.add('hide'); controls.classList.add('hide');
+    startScreen.classList.remove('hide'); kidsScreen.classList.add('hide'); installScreen.classList.add('hide'); introScreen.classList.add('hide'); gameOverScreen.classList.add('hide'); pauseScreen.classList.add('hide'); hud.classList.add('hide'); controls.classList.add('hide');
+  }
+
+  function pauseGame(){
+    if (GAME.state !== 'playing') return;
+    GAME.state='paused';
+    pauseBtn.classList.remove('is-pressed');
+    jumpHeld=false; rollHeld=false; comboConsumed=false;
+    pauseScreen.classList.remove('hide');
+    controls.classList.add('hide');
+    if (AUDIO.enabled && AUDIO.ctx && AUDIO.ctx.state === 'running') AUDIO.ctx.suspend().catch(() => {});
+  }
+
+  function resumeGame(){
+    if (GAME.state !== 'paused') return;
+    GAME.state='playing';
+    pauseScreen.classList.add('hide');
+    if (GAME.eventPauseTimer<=0) controls.classList.remove('hide');
+    if (AUDIO.enabled) ensureAudio();
+  }
+
+  function togglePause(){
+    if (GAME.state === 'playing') pauseGame();
+    else if (GAME.state === 'paused') resumeGame();
   }
 
   function beginDeath(reason,pendingRevive=false){
@@ -5934,7 +6034,7 @@ function drawRescue(e){
     ctx.scale(scale, scale);
     drawBackground();
     try {
-      if (GAME.state === 'playing' || GAME.state === 'dying' || GAME.state === 'gameover'){
+      if (GAME.state === 'playing' || GAME.state === 'paused' || GAME.state === 'dying' || GAME.state === 'gameover'){
         for(const platform of GAME.platforms) drawPlatform(platform);
         for(const e of GAME.entities){
           if (e.kind === 'obstacle') drawObstacle(e);
@@ -6017,7 +6117,7 @@ function drawRescue(e){
   }
 
   // Cubre además selección, arrastre, doble clic y menú contextual sintético.
-  for (const el of [controls,jumpBtn,rollBtn]){
+  for (const el of [controls,jumpBtn,pauseBtn,rollBtn]){
     for (const eventName of ['contextmenu','selectstart','dragstart','dblclick']){
       el.addEventListener(eventName, event => event.preventDefault(), {passive:false});
     }
@@ -6030,9 +6130,9 @@ function drawRescue(e){
   });
 
   // Gamepad API: disposición estándar compartida por DualShock/DualSense y
-  // la mayoría de los mandos compatibles. L1 es el botón 4; R1, el botón 5.
-  const GAMEPAD_BUTTON={jump:4,roll:5};
-  const gamepadState={index:null,jump:false,roll:false};
+  // la mayoría de los mandos compatibles. L1 es 4, R1 es 5 y Options/Start es 9.
+  const GAMEPAD_BUTTON={jump:4,roll:5,pause:9};
+  const gamepadState={index:null,jump:false,roll:false,pause:false};
 
   function gamepadButtonPressed(button){
     return Boolean(button && (button.pressed || button.value > 0.55));
@@ -6056,25 +6156,30 @@ function drawRescue(e){
     if (!pad){
       gamepadState.jump=false;
       gamepadState.roll=false;
+      gamepadState.pause=false;
       return;
     }
 
     const jumpNow=gamepadButtonPressed(pad.buttons[GAMEPAD_BUTTON.jump]);
     const rollNow=gamepadButtonPressed(pad.buttons[GAMEPAD_BUTTON.roll]);
+    const pauseNow=gamepadButtonPressed(pad.buttons[GAMEPAD_BUTTON.pause]);
 
     // Solo actúa en el borde de pulsación: mantener L1/R1 apretado no repite
     // la acción, pero dos pulsaciones de L1 sí producen el doble salto.
     if (jumpNow && !gamepadState.jump) jump();
     if (rollNow && !gamepadState.roll) roll();
+    if (pauseNow && !gamepadState.pause) togglePause();
     gamepadState.jump=jumpNow;
     gamepadState.roll=rollNow;
+    gamepadState.pause=pauseNow;
   }
 
   window.addEventListener('gamepadconnected', event => {
     gamepadState.index=event.gamepad.index;
     gamepadState.jump=false;
     gamepadState.roll=false;
-    if (GAME.state==='playing') showMessage('CONTROL CONECTADO · L1 SALTAR · R1 RODAR',2200);
+    gamepadState.pause=false;
+    if (GAME.state==='playing') showMessage('CONTROL CONECTADO · L1 SALTAR · R1 RODAR · OPTIONS PAUSA',2500);
   });
 
   window.addEventListener('gamepaddisconnected', event => {
@@ -6082,6 +6187,7 @@ function drawRescue(e){
       gamepadState.index=null;
       gamepadState.jump=false;
       gamepadState.roll=false;
+      gamepadState.pause=false;
       if (GAME.state==='playing') showMessage('CONTROL DESCONECTADO',1500);
     }
   });
@@ -6850,17 +6956,24 @@ function drawRescue(e){
   closeInstallBtn.addEventListener('click', closeInstallHelp);
   retryBtn.addEventListener('click', retryGame);
   menuBtn.addEventListener('click', toMenu);
+  resumeBtn.addEventListener('click', resumeGame);
+  pauseMenuBtn.addEventListener('click', toMenu);
   soundToggle.addEventListener('click', toggleSound);
   window.addEventListener('keydown', (e) => {
-    if (e.repeat && (e.code === 'Space' || e.code === 'ArrowUp' || e.code === 'ArrowDown' || e.code === 'KeyS')){
+    if (e.repeat && (e.code === 'Space' || e.code === 'ArrowUp' || e.code === 'ArrowDown' || e.code === 'KeyS' || e.code === 'KeyP')){
       e.preventDefault(); return;
     }
-    if (e.code === 'Space' || e.code === 'ArrowUp'){ e.preventDefault(); jump(); }
+    if (e.code === 'KeyP'){ e.preventDefault(); togglePause(); }
+    else if (e.code === 'Space' || e.code === 'ArrowUp'){ e.preventDefault(); jump(); }
     else if (e.code === 'ArrowDown' || e.code === 'KeyS'){ e.preventDefault(); roll(); }
   }, {passive:false});
 
   bindPress(jumpBtn, 'jump', jump);
+  bindPress(pauseBtn, 'pause', togglePause);
   bindPress(rollBtn, 'roll', roll);
+  document.addEventListener('visibilitychange',()=>{
+    if (document.hidden && GAME.state==='playing') pauseGame();
+  });
 
   recordBox.innerHTML = '<span class="hud-label">Récord</span><span class="hud-value">' + bestRecord + '</span>';
 
